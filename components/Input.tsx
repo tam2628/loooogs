@@ -1,8 +1,9 @@
 import classNames from "classnames";
-import React from "react";
+import React, { HTMLInputTypeAttribute } from "react";
 
 type InputProps = {
   isInvalid?: boolean;
+  type?: HTMLInputTypeAttribute;
 };
 
 export const Input = React.forwardRef<

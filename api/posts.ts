@@ -13,7 +13,7 @@ export async function getPosts(
     }
 
     const response = await fetch(url, {
-      cache: "no-cache",
+      next: { revalidate: 600 },
     });
 
     if (response.ok) {
@@ -60,4 +60,15 @@ export async function getCommentsByPostId(
   return {} as any;
 }
 
-export async function searchPosts(searchTerm: string) {}
+export async function searchPosts(searchTerm: string) {
+  try {
+    const response = await fetch(`${host}/posts?tags_like=${searchTerm}`);
+    if (response.ok) {
+      return (await response.json()) as Post[];
+    }
+  } catch (err) {
+    //handle error
+  }
+
+  return {} as any;
+}
