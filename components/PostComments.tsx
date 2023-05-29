@@ -8,8 +8,5 @@ type PostCommentsProps = {
 
 export default function PostComments({ postId }: PostCommentsProps) {
   const comments = use(getCommentsByPostId(postId));
-
-  console.log(comments);
-
   return <PostCommentItems postId={postId} comments={comments} />;
 }

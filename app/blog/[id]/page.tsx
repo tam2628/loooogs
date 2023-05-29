@@ -34,8 +34,8 @@ export default async function Blog({ params: { id } }: Params) {
             src={post.image}
             className="w-full h-auto"
             alt={"post image"}
-            width={100}
-            height={100}
+            width={1920}
+            height={1080}
           />
         </div>
 

@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     domains: ["avataaars.io", "wallpapers.com"],
+    formats: ["image/webp"],
   },
 };
 

@@ -57,7 +57,7 @@ export default function PostItems({ posts, total, page }: PostItemsProps) {
         }
         dataLength={_posts.length}
       >
-        <ul className="grid grid-cols-3 gap-x-16 gap-y-12 p-2">
+        <ul className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-12 p-2">
           {_posts.map((post, key) => (
             <li key={key} className="mb-10 ">
               <motion.div
@@ -71,8 +71,8 @@ export default function PostItems({ posts, total, page }: PostItemsProps) {
                   <div>
                     <Image
                       src={post.image}
-                      width={100}
-                      height={100}
+                      width={1920}
+                      height={1080}
                       alt={"Blog image"}
                       className="w-full h-auto"
                     />
