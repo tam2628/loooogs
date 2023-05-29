@@ -13,6 +13,7 @@ import { Input } from "./Input";
 import SearchInput from "./SearchInput";
 import { useSearchParams } from "next/navigation";
 import SearchInputWrapper from "./SearchInputWrapper";
+import { Tag } from "./Tag";
 
 type PostItemsProps = {
   posts: Post[];
@@ -137,6 +138,11 @@ function PostList({ posts }: { posts: Post[] }) {
                 <p className="mb-3 text-slate-600 text-sm">
                   {post.body.slice(0, 100)}...
                 </p>
+                <div className="flex space-x-2 mt-4">
+                  {post.tags.map((tag, key) => (
+                    <Tag key={`tag-${key}`} text={tag} />
+                  ))}
+                </div>
               </div>
             </Link>
           </motion.div>
