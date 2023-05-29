@@ -9,7 +9,7 @@ npm install
 Install json-server
 
 ```bash
-npm i json-server
+npm install -g json-server
 ```
 
 Run the posts server
