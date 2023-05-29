@@ -5,12 +5,10 @@ import { playfair } from "@/lib/fonts";
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { motion } from "framer-motion";
 import PageWrapper from "./PageWrapper";
-import { Input } from "./Input";
-import SearchInput from "./SearchInput";
 import { useSearchParams } from "next/navigation";
 import SearchInputWrapper from "./SearchInputWrapper";
 import { Tag } from "./Tag";
@@ -28,12 +26,20 @@ export default function PostItems({ posts, total, page }: PostItemsProps) {
   const lastPage = total / 10 + (total % 10 ? 1 : 0);
   const search = useSearchParams().get("q");
   const [_, setFetching] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     setFetching(true);
     if (!search) {
       (async () => {
-        setPosts((await getPosts(1)).result);
+        const result = await getPosts(1);
+
+        if (result.isErr()) {
+          setError(result.unwrapErr());
+          return;
+        }
+
+        setPosts(result.unwrap().result);
         setCurrentPage(1);
         setFetching(false);
       })();
@@ -42,9 +48,14 @@ export default function PostItems({ posts, total, page }: PostItemsProps) {
     }
 
     (async () => {
-      const x = await searchPosts(search);
+      const result = await searchPosts(search);
 
-      setPosts(x);
+      if (result.isErr()) {
+        setError(result.unwrapErr());
+        return;
+      }
+
+      setPosts(result.unwrap());
       setFetching(false);
     })();
   }, [search]);
@@ -55,11 +66,28 @@ export default function PostItems({ posts, total, page }: PostItemsProps) {
   }, [currentPage]);
 
   async function loadMorePosts() {
-    const posts = (await getPosts(currentPage + 1)).result;
+    const result = await getPosts(currentPage + 1);
+
+    if (result.isErr()) {
+      setError(result.unwrapErr);
+      return;
+    }
+
+    const posts = result.unwrap().result;
     setTimeout(() => {
       setPosts([..._posts, ...posts]);
       setCurrentPage((currentPage) => currentPage + 1);
     }, 1000);
+  }
+
+  if (error) {
+    return (
+      <PageWrapper>
+        <div className="text-center">
+          <p className="sm:text-xl md:text-2xl">{error}</p>
+        </div>
+      </PageWrapper>
+    );
   }
 
   if (!_posts.length && search !== "") {

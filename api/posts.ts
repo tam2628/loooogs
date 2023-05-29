@@ -1,12 +1,10 @@
+import { Err, Ok, Result } from "@sniptt/monads";
+
 const host = "http://localhost:3001";
 export async function getPosts(
   page: number = -1
-): Promise<PaginatedResponse<Post[]>> {
-  //setting default item per page to be 5
+): Promise<Result<PaginatedResponse<Post[]>, string>> {
   try {
-    // Could have used revalidate here instead of no-cache
-    // but that would not show SSR capability
-
     let url = `${host}/posts`;
     if (page !== -1) {
       url += `?_page=${page}`;
@@ -17,27 +15,33 @@ export async function getPosts(
     });
 
     if (response.ok) {
-      return {
+      return Ok({
         page,
         total: Number.parseInt(response.headers.get("X-Total-Count") as string),
         result: await response.json(),
-      } as PaginatedResponse<Post[]>;
+      } as PaginatedResponse<Post[]>);
     }
   } catch (err) {
-    // handle error
+    return Err("Failed to fetch posts");
   }
 
   return {} as any;
 }
 
-export async function getPostById(id: string): Promise<Post> {
+export async function getPostById(id: string): Promise<Result<Post, string>> {
   try {
     const response = await fetch(`${host}/posts/${id}`);
     if (response.ok) {
-      return (await response.json()) as Post;
+      const post = (await response.json()) as Post;
+
+      return Ok(post);
+    }
+
+    if (response.status === 404) {
+      return Err("Post not found");
     }
   } catch (err) {
-    //handle error
+    return Err("Something went wrong, failed to fetch post");
   }
 
   return {} as any;
@@ -45,29 +49,37 @@ export async function getPostById(id: string): Promise<Post> {
 
 export async function getCommentsByPostId(
   postId: number
-): Promise<PostComment[]> {
+): Promise<Result<PostComment[], string>> {
   try {
     const response = await fetch(`${host}/posts/${postId}/comments`, {
       cache: "no-cache",
     });
     if (response.ok) {
-      return (await response.json()) as PostComment[];
+      const comments = (await response.json()) as PostComment[];
+      return Ok(comments);
+    }
+
+    if (response.status === 404) {
+      return Err("Post not found");
     }
   } catch (err) {
-    //handle error
+    return Err("Something went wrong, failed to fetch comments");
   }
 
   return {} as any;
 }
 
-export async function searchPosts(searchTerm: string) {
+export async function searchPosts(
+  searchTerm: string
+): Promise<Result<Post[], string>> {
   try {
     const response = await fetch(`${host}/posts?tags_like=${searchTerm}`);
     if (response.ok) {
-      return (await response.json()) as Post[];
+      const posts = (await response.json()) as Post[];
+      return Ok(posts);
     }
   } catch (err) {
-    //handle error
+    return Err("Something went wrong, failed to fetch posts");
   }
 
   return {} as any;

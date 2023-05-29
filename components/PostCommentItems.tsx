@@ -3,7 +3,6 @@
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import CommentForm from "./CommentForm";
-import { useEffect } from "react";
 
 type PostCommentItemsProps = {
   postId: number;

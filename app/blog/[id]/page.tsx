@@ -4,7 +4,6 @@ import PostComments from "@/components/PostComments";
 import { playfair } from "@/lib/fonts";
 import classNames from "classnames";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 
 type Params = {
   params: {
@@ -13,11 +12,19 @@ type Params = {
 };
 
 export default async function Blog({ params: { id } }: Params) {
-  const post = await getPostById(id);
+  const result = await getPostById(id);
 
-  if (!Object.keys(post).length) {
-    notFound();
+  if (result.isErr()) {
+    return (
+      <PageWrapper>
+        <div className="text-center">
+          <p className="sm:text-xl md:text-2xl">{result.unwrapErr()}</p>
+        </div>
+      </PageWrapper>
+    );
   }
+
+  const post = result.unwrap();
 
   return (
     <PageWrapper>
@@ -54,8 +61,9 @@ export default async function Blog({ params: { id } }: Params) {
 }
 
 export async function generateStaticParams() {
-  const paginatedPostsResponse = await getPosts();
-  return paginatedPostsResponse.result.map((post) => ({
+  const result = await getPosts();
+
+  return result.unwrap().result.map((post) => ({
     id: post.id.toString(),
   }));
 }

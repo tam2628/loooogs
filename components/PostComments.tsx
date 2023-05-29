@@ -7,6 +7,12 @@ type PostCommentsProps = {
 };
 
 export default function PostComments({ postId }: PostCommentsProps) {
-  const comments = use(getCommentsByPostId(postId));
+  const result = use(getCommentsByPostId(postId));
+
+  if (result.isErr()) {
+    return <p>{result.unwrapErr()}</p>;
+  }
+
+  const comments = result.unwrap();
   return <PostCommentItems postId={postId} comments={comments} />;
 }
