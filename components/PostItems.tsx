@@ -114,7 +114,7 @@ export default function PostItems({ posts, total, page }: PostItemsProps) {
               transition={{
                 repeat: Infinity,
                 repeatDelay: 0.7,
-                ease: "easeInOut",
+                ease: "easeIn",
               }}
               className="p-5 text-center"
             >

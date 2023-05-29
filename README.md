@@ -2,6 +2,9 @@
 
 ## How to run the project?
 
+Node version 18.15.0
+Nextjs 13
+
 Install dependencies
 
 ```bash
